@@ -2,7 +2,7 @@ import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 import { generateInvoicePdf } from '@/lib/generateInvoice'
 
-const resend = new Resend(process.env.re_WL1ydQow_58LCbMEyFtKhndbmANMJHkFW) // ✅ use ENV variable correctly
+const resend = new Resend(process.env.RESEND_API_KEY!) // ✅ use ENV variable correctly
 
 export async function POST(req: Request) {
   const body = await req.json()
