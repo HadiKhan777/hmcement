@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
+    "firebase": "^11.9.1",
     "next": "15.3.3",
+    "pdf-lib": "^1.17.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "resend": "^4.6.0",
     "stripe": "^18.2.1"
   },
   "devDependencies": {

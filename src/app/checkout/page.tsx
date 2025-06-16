@@ -2,11 +2,18 @@
 
 import { useCart } from '@/context/CartContext'
 import { useState } from 'react'
+import { db } from '@/lib/firebase'
+import { addDoc, collection, Timestamp } from 'firebase/firestore'
+import { uploadToCloudinary } from '@/lib/uploadToCloudinary'
+import { useRouter } from 'next/navigation'
 
 export default function CheckoutPage() {
   const { cart } = useCart()
+  const [buyerEmail, setBuyerEmail] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank'>('card')
   const [screenshot, setScreenshot] = useState<File | null>(null)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const deliveryCharge = 500
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0)
@@ -18,13 +25,61 @@ export default function CheckoutPage() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    alert(
-      paymentMethod === 'card'
-        ? 'Redirecting to credit card payment...'
-        : 'Bank transfer screenshot submitted. Pending approval.'
-    )
+
+    if (!cart.length) return alert('❌ Your cart is empty.')
+    if (!buyerEmail) return alert('📧 Please enter your email.')
+    if (paymentMethod === 'card') {
+      alert('💳 Redirecting to card payment gateway...')
+      return
+    }
+
+    if (!screenshot) return alert('📎 Please upload a bank transfer screenshot.')
+
+    try {
+      setLoading(true)
+
+      // Upload screenshot
+      const imageUrl = await uploadToCloudinary(screenshot)
+
+      // Save to Firestore
+      await addDoc(collection(db, 'orders'), {
+        email: buyerEmail,
+        items: cart,
+        total: cartTotal,
+        delivery: deliveryCharge,
+        grandTotal,
+        paymentMethod: 'bank',
+        screenshot: imageUrl,
+        status: 'pending',
+        createdAt: Timestamp.now(),
+      })
+
+      // Send confirmation email
+      await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: buyerEmail,
+          name: 'Customer',
+          orderDetails:
+            cart
+              .map((item) => `${item.name} × ${item.quantity} = ₨${item.price}`)
+              .join('\n') +
+            `\n\nDelivery: ₨${deliveryCharge}\nTotal: ₨${grandTotal}`,
+        }),
+      })
+
+      alert('✅ Order submitted! Confirmation email sent.')
+      router.push('/products')
+    } catch (err) {
+      console.error(err)
+      alert('❌ Failed to submit your order.')
+    } finally {
+      setLoading(false)
+      setScreenshot(null)
+    }
   }
 
   return (
@@ -54,6 +109,18 @@ export default function CheckoutPage() {
       {cart.length > 0 && (
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
+            <label className="block font-medium mb-2">Your Email (for confirmation):</label>
+            <input
+              type="email"
+              required
+              value={buyerEmail}
+              onChange={(e) => setBuyerEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="border rounded px-3 py-2 w-full"
+            />
+          </div>
+
+          <div>
             <label className="block font-medium mb-2">Choose Payment Method:</label>
             <select
               value={paymentMethod}
@@ -67,7 +134,7 @@ export default function CheckoutPage() {
 
           {paymentMethod === 'card' && (
             <div className="border p-4 rounded-lg bg-gray-50">
-              <p className="text-sm text-gray-600">You’ll be redirected to a secure Stripe checkout.</p>
+              <p className="text-sm text-gray-600">You’ll be redirected to a secure card gateway (to be added).</p>
               <button
                 type="submit"
                 className="mt-4 bg-[#1f1f1f] text-white px-6 py-2 rounded hover:scale-105 transition"
@@ -79,14 +146,19 @@ export default function CheckoutPage() {
 
           {paymentMethod === 'bank' && (
             <div className="border p-4 rounded-lg bg-gray-50 space-y-4">
-              <p className="text-sm">Upload your bank transfer screenshot below:</p>
+              <p className="text-sm">Upload your bank transfer screenshot:</p>
               <input type="file" accept="image/*" onChange={handleUpload} />
-              {screenshot && <p className="text-sm text-green-600">✔️ File selected: {screenshot.name}</p>}
+              {screenshot && (
+                <p className="text-sm text-green-600">
+                  ✔️ File selected: {screenshot.name ?? 'screenshot.jpg'}
+                </p>
+              )}
               <button
                 type="submit"
-                className="bg-[#1f1f1f] text-white px-6 py-2 rounded hover:scale-105 transition"
+                disabled={loading}
+                className="bg-[#1f1f1f] text-white px-6 py-2 rounded hover:scale-105 transition disabled:opacity-50"
               >
-                Submit Payment Proof
+                {loading ? 'Submitting...' : 'Submit Payment Proof'}
               </button>
             </div>
           )}

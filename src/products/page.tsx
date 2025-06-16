@@ -13,21 +13,27 @@ type Product = {
 const products: Product[] = [
   {
     id: 1,
-    name: 'UltraTech Cement',
-    image: '/ultratech.png',
-    basePrice: 1200,
+    name: 'Lucky Regular Cement',
+    image: '/luckyregular.png',
+    basePrice: 1100,
   },
   {
     id: 2,
-    name: 'Ambuja Cement',
-    image: '/ambuja.png',
+    name: 'SRC Cement',
+    image: '/src.png',
     basePrice: 1150,
   },
   {
     id: 3,
-    name: 'ACC Cement',
-    image: '/acc.png',
-    basePrice: 1100,
+    name: 'Supreme Cement',
+    image: '/supreme.png',
+    basePrice: 1120,
+  },
+  {
+    id: 4,
+    name: 'Block Cement',
+    image: '/block.png',
+    basePrice: 1090,
   },
 ]
 
