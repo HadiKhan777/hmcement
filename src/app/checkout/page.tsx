@@ -146,7 +146,22 @@ export default function CheckoutPage() {
           {paymentMethod === 'bank' && (
             <div className="border p-4 rounded-lg bg-gray-50 space-y-4">
               <p className="text-sm">Upload your bank transfer screenshot:</p>
-              <input type="file" accept="image/*" onChange={handleUpload} />
+              <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) {
+                          console.log('📂 File selected:', file.name)
+                          setScreenshot(file)
+                        }
+                                }
+                        }
+  className="block w-full text-sm file:mr-4 file:py-2 file:px-4
+             file:rounded file:border-0 file:text-sm
+             file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+/>
+
               {screenshot && (
                 <p className="text-sm text-green-600">
                   ✔️ File selected: {screenshot.name ?? 'screenshot.jpg'}
