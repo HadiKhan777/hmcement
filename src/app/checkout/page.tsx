@@ -72,10 +72,13 @@ export default function CheckoutPage() {
 
     alert('✅ Order submitted! Confirmation email sent.')
     router.push('/products')
-  } catch (err: any) {
-    console.error('❌ Order submission failed:', err.message || err)
-    alert('❌ Failed to submit your order.')
-  } finally {
+  }
+   catch (err: any) 
+   {
+  console.error('❌ Order submission failed:', err?.message || err)
+  alert('❌ Failed to submit your order.')
+   }
+   finally {
     setLoading(false)
     setScreenshot(null)
   }
