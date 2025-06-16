@@ -9,21 +9,31 @@ import {
   doc,
   query,
   orderBy,
+  DocumentData,
+  Timestamp,
 } from 'firebase/firestore'
+
+type CartItem = {
+  name: string
+  quantity: number
+  price: number
+  image?: string
+}
 
 type Order = {
   id: string
-  items: any[]
+  items: CartItem[]
   total: number
   delivery: number
   grandTotal: number
   screenshot?: string
   paymentMethod: string
-  status: string
-  createdAt: any
+  status: 'pending' | 'approved' | 'delivered'
+  createdAt: Timestamp
+  email?: string
 }
 
-const ADMIN_PASSWORD = 'hmcement123' // ✅ change this to something only you know
+const ADMIN_PASSWORD = 'hmcement123' // ✅ update this before deployment
 
 export default function AdminPage() {
   const [accessGranted, setAccessGranted] = useState(false)
@@ -34,10 +44,23 @@ export default function AdminPage() {
   const fetchOrders = async () => {
     const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'))
     const snapshot = await getDocs(q)
-    const data = snapshot.docs.map((docSnap) => ({
-      id: docSnap.id,
-      ...docSnap.data(),
-    })) as Order[]
+
+    const data: Order[] = snapshot.docs.map((docSnap) => {
+      const raw = docSnap.data() as DocumentData
+      return {
+        id: docSnap.id,
+        items: raw.items,
+        total: raw.total,
+        delivery: raw.delivery,
+        grandTotal: raw.grandTotal,
+        screenshot: raw.screenshot,
+        paymentMethod: raw.paymentMethod,
+        status: raw.status,
+        createdAt: raw.createdAt,
+        email: raw.email,
+      }
+    })
+
     setOrders(data)
     setLoading(false)
   }
