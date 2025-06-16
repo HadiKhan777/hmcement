@@ -13,7 +13,8 @@ export async function uploadToCloudinary(file: File): Promise<string> {
   const data = await res.json()
 
   if (!res.ok || !data.success) {
-    throw new Error('❌ Failed to upload image')
+    console.error('❌ ImgBB Upload Error:', data)
+    throw new Error('Image upload failed')
   }
 
   return data.data.url

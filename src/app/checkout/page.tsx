@@ -26,61 +26,60 @@ export default function CheckoutPage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  e.preventDefault()
 
-    if (!cart.length) return alert('❌ Your cart is empty.')
-    if (!buyerEmail) return alert('📧 Please enter your email.')
-    if (paymentMethod === 'card') {
-      alert('💳 Redirecting to card payment gateway...')
-      return
-    }
+  if (!cart.length) return alert('❌ Your cart is empty.')
+  if (!buyerEmail) return alert('📧 Please enter your email.')
+  if (!screenshot && paymentMethod === 'bank') return alert('📎 Upload screenshot required.')
 
-    if (!screenshot) return alert('📎 Please upload a bank transfer screenshot.')
+  try {
+    setLoading(true)
 
-    try {
-      setLoading(true)
+    console.log('📤 Uploading screenshot...')
+    const imageUrl = await uploadToCloudinary(screenshot!)
+    console.log('✅ Screenshot uploaded:', imageUrl)
 
-      // Upload screenshot
-      const imageUrl = await uploadToCloudinary(screenshot)
+    console.log('📥 Saving order to Firestore...')
+    await addDoc(collection(db, 'orders'), {
+      email: buyerEmail,
+      items: cart,
+      total: cartTotal,
+      delivery: deliveryCharge,
+      grandTotal,
+      paymentMethod: 'bank',
+      screenshot: imageUrl,
+      status: 'pending',
+      createdAt: Timestamp.now(),
+    })
+    console.log('✅ Order saved to Firestore')
 
-      // Save to Firestore
-      await addDoc(collection(db, 'orders'), {
+    console.log('📧 Sending email...')
+    const emailRes = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         email: buyerEmail,
-        items: cart,
-        total: cartTotal,
-        delivery: deliveryCharge,
-        grandTotal,
-        paymentMethod: 'bank',
-        screenshot: imageUrl,
-        status: 'pending',
-        createdAt: Timestamp.now(),
-      })
+        name: 'Customer',
+        orderDetails:
+          cart
+            .map((item) => `${item.name} × ${item.quantity} = ₨${item.price}`)
+            .join('\n') +
+          `\n\nDelivery: ₨${deliveryCharge}\nTotal: ₨${grandTotal}`,
+      }),
+    })
+    const emailData = await emailRes.json()
+    console.log('✅ Email sent response:', emailData)
 
-      // Send confirmation email
-      await fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: buyerEmail,
-          name: 'Customer',
-          orderDetails:
-            cart
-              .map((item) => `${item.name} × ${item.quantity} = ₨${item.price}`)
-              .join('\n') +
-            `\n\nDelivery: ₨${deliveryCharge}\nTotal: ₨${grandTotal}`,
-        }),
-      })
-
-      alert('✅ Order submitted! Confirmation email sent.')
-      router.push('/products')
-    } catch (err) {
-      console.error(err)
-      alert('❌ Failed to submit your order.')
-    } finally {
-      setLoading(false)
-      setScreenshot(null)
-    }
+    alert('✅ Order submitted! Confirmation email sent.')
+    router.push('/products')
+  } catch (err: any) {
+    console.error('❌ Order submission failed:', err.message || err)
+    alert('❌ Failed to submit your order.')
+  } finally {
+    setLoading(false)
+    setScreenshot(null)
   }
+}
 
   return (
     <main className="min-h-screen py-12 px-6 max-w-2xl mx-auto">
