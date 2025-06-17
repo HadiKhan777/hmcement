@@ -19,7 +19,8 @@ export default function CheckoutPage() {
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0)
   const grandTotal = cartTotal + deliveryCharge
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => 
+  {
     if (e.target.files && e.target.files[0]) {
       setScreenshot(e.target.files[0])
     }
@@ -73,11 +74,15 @@ export default function CheckoutPage() {
     alert('✅ Order submitted! Confirmation email sent.')
     router.push('/products')
   }
-   catch (err: any) 
-   {
-  console.error('❌ Order submission failed:', err?.message || err)
+  catch (err: any) {
+  if (err instanceof Error) {
+    console.error('❌ Caught Error:', err.message)
+  } else {
+    console.error('❌ Unknown error object:', err)
+  }
   alert('❌ Failed to submit your order.')
-   }
+}
+
    finally {
     setLoading(false)
     setScreenshot(null)
