@@ -9,6 +9,9 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 }
-
+// Validate required env variables
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.appId) {
+  throw new Error('❌ Firebase config missing in .env.local')
+}
 const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)

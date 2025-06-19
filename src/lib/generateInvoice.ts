@@ -6,7 +6,7 @@ export async function generateInvoicePdf(email: string, orderDetails: string) {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
   const drawText = (text: string, x: number, y: number, size = 12) => {
-    page.drawText(text, {
+    page.drawText(text.replace(/₨/g, 'Rs.'), {
       x,
       y,
       size,

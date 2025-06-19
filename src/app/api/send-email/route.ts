@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     // ✅ Send internal notification to admin
     await resend.emails.send({
       from: 'orders@hmcement.com',
-      to: 'your-email@hmcement.com', // ✅ Replace with your actual admin email
+      to: 'hadikhan2003@gmail.com', // ✅ Replace with your actual admin email
       subject: '📦 New Cement Order Received!',
       html: `
         <p><strong>New order from ${name} (${email})</strong></p>

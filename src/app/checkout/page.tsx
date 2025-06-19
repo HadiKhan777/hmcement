@@ -84,6 +84,7 @@ export default function CheckoutPage() {
 }
 
    finally {
+    console.log('🔄 Resetting form state')
     setLoading(false)
     setScreenshot(null)
   }
@@ -180,7 +181,7 @@ export default function CheckoutPage() {
                 disabled={loading}
                 className="bg-[#1f1f1f] text-white px-6 py-2 rounded hover:scale-105 transition disabled:opacity-50"
               >
-                {loading ? 'Submitting...' : 'Submit Payment Proof'}
+                {loading ? 'Submitted✔️ ' : 'Submit Payment Proof'}
               </button>
             </div>
           )}
