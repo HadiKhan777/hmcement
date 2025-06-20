@@ -2,51 +2,49 @@ import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 import { generateInvoicePdf } from '@/lib/generateInvoice'
 
-const resend = new Resend(process.env.RESEND_API_KEY!) // ✅ use ENV variable correctly
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: Request) {
   const body = await req.json()
 
   try {
-    const { email, name, orderDetails } = body
+    const { email, name, orderDetails, orderId } = body
 
-    // ✅ Generate PDF invoice and encode to Base64
-    const pdfBase64 = await generateInvoicePdf(email, orderDetails)
+    const invoiceBase64 = await generateInvoicePdf(orderId, email, orderDetails)
 
-    // ✅ Send email to customer with invoice
+    const invoiceAttachment = {
+      filename: `invoice-${orderId}.pdf`,
+      content: invoiceBase64,
+      contentType: 'application/pdf',
+    }
+
+    // 1. Send email to customer
     await resend.emails.send({
       from: 'orders@hmcement.com',
       to: email,
       subject: 'Your Order with H&M Cement',
       html: `
         <p>Hi ${name},</p>
-        <p>Thank you for your order. Your invoice is attached.</p>
+        <p>Thank you for your order. Here is your invoice and summary:</p>
+        <pre style="background:#f4f4f4;padding:10px;border-radius:5px;">${orderDetails}</pre>
+        <p>We'll verify your payment and deliver your order soon.</p>
         <p>Regards,<br/>H&M Cement Team</p>
       `,
-      attachments: [
-        {
-          filename: 'invoice.pdf',
-          content: pdfBase64,
-        },
-      ],
+      attachments: [invoiceAttachment],
     })
 
-    // ✅ Send internal notification to admin
+    // 2. Send notification to admin
     await resend.emails.send({
       from: 'orders@hmcement.com',
-      to: 'hadikhan2003@gmail.com', // ✅ Replace with your actual admin email
+      to: 'your-email@hmcement.com', // replace with actual admin email
       subject: '📦 New Cement Order Received!',
       html: `
         <p><strong>New order from ${name} (${email})</strong></p>
+        <p>Order ID: ${orderId}</p>
         <p>Details:</p>
         <pre style="background:#f4f4f4;padding:10px;border-radius:5px;">${orderDetails}</pre>
       `,
-      attachments: [
-        {
-          filename: 'invoice.pdf',
-          content: pdfBase64,
-        },
-      ],
+      attachments: [invoiceAttachment],
     })
 
     return NextResponse.json({ success: true })

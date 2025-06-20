@@ -1,9 +1,23 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
+import { readFile } from 'fs/promises'
+import path from 'path'
 
-export async function generateInvoicePdf(email: string, orderDetails: string) {
+export async function generateInvoicePdf(orderId: string, email: string, orderDetails: string) {
   const pdfDoc = await PDFDocument.create()
   const page = pdfDoc.addPage([600, 750])
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+
+  // Load and embed the logo image
+  const logoPath = path.resolve(process.cwd(), 'public/logo.png') // Make sure logo is placed in /public/
+  const logoBytes = await readFile(logoPath)
+  const logoImage = await pdfDoc.embedPng(logoBytes)
+  const logoDims = logoImage.scale(0.15)
+  page.drawImage(logoImage, {
+    x: 440,
+    y: 690,
+    width: logoDims.width,
+    height: logoDims.height,
+  })
 
   const drawText = (text: string, x: number, y: number, size = 12) => {
     page.drawText(text.replace(/₨/g, 'Rs.'), {
@@ -18,9 +32,13 @@ export async function generateInvoicePdf(email: string, orderDetails: string) {
   let cursorY = 700
   drawText('H&M Cement - Order Invoice', 50, cursorY, 18)
   cursorY -= 30
-  drawText(`Customer: ${email}`, 50, cursorY)
+  drawText(`Order ID: ${orderId}`, 50, cursorY)
+  cursorY -= 20
+  drawText(`Customer Email: ${email}`, 50, cursorY)
   cursorY -= 20
   drawText(`Date: ${new Date().toLocaleString()}`, 50, cursorY)
+  cursorY -= 20
+  drawText(`Phone/WhatsApp: 0300-4013971`, 50, cursorY)
   cursorY -= 30
   drawText('Order Summary:', 50, cursorY)
   cursorY -= 20

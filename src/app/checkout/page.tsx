@@ -19,82 +19,86 @@ export default function CheckoutPage() {
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0)
   const grandTotal = cartTotal + deliveryCharge
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => 
-  {
-    if (e.target.files && e.target.files[0]) {
-      setScreenshot(e.target.files[0])
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!cart.length) return alert('❌ Your cart is empty.')
+    if (!buyerEmail) return alert('📧 Please enter your email.')
+    if (!screenshot && paymentMethod === 'bank') return alert('📎 Upload screenshot required.')
+
+    try {
+      setLoading(true)
+
+      console.log('📤 Uploading screenshot...')
+      const imageUrl = await uploadToCloudinary(screenshot!)
+      console.log('✅ Screenshot uploaded:', imageUrl)
+
+      console.log('📥 Saving order to Firestore...')
+      const docRef = await addDoc(collection(db, 'orders'), {
+        email: buyerEmail,
+        items: cart,
+        total: cartTotal,
+        delivery: deliveryCharge,
+        grandTotal,
+        paymentMethod: 'bank',
+        screenshot: imageUrl,
+        status: 'pending',
+        createdAt: Timestamp.now(),
+      })
+      const orderId = docRef.id
+      await fetch('/api/send-email', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email: buyerEmail,
+    name: 'Customer',
+    orderDetails:
+      cart.map((item) => `${item.name} × ${item.quantity} = ₨${item.price}`).join('\n') +
+      `\n\nDelivery: ₨${deliveryCharge}\nTotal: ₨${grandTotal}`,
+    orderId, // ✅ pass the ID to backend
+  }),
+})
+      console.log('✅ Order saved to Firestore with ID:', orderId)
+
+      const orderSummary = cart
+        .map((item) => `${item.name} × ${item.quantity} = ₨${item.price}`)
+        .join('\n') + `\n\nDelivery: ₨${deliveryCharge}\nTotal: ₨${grandTotal}`
+
+      console.log('📧 Sending email...')
+      const emailRes = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: buyerEmail,
+          name: 'Customer',
+          orderId: orderId,
+          orderDetails: orderSummary,
+        }),
+      })
+
+      const emailData = await emailRes.json()
+      console.log('✅ Email sent response:', emailData)
+
+      alert('✅ Order submitted! Confirmation email sent.')
+      router.push('/products')
+    } catch (err: any) {
+      if (err instanceof Error) {
+        console.error('❌ Caught Error:', err.message)
+      } else {
+        console.error('❌ Unknown error object:', err)
+      }
+      alert('❌ Failed to submit your order.')
+    } finally {
+      console.log('🔄 Resetting form state')
+      setLoading(false)
+      setScreenshot(null)
     }
   }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-
-  if (!cart.length) return alert('❌ Your cart is empty.')
-  if (!buyerEmail) return alert('📧 Please enter your email.')
-  if (!screenshot && paymentMethod === 'bank') return alert('📎 Upload screenshot required.')
-
-  try {
-    setLoading(true)
-
-    console.log('📤 Uploading screenshot...')
-    const imageUrl = await uploadToCloudinary(screenshot!)
-    console.log('✅ Screenshot uploaded:', imageUrl)
-
-    console.log('📥 Saving order to Firestore...')
-    await addDoc(collection(db, 'orders'), {
-      email: buyerEmail,
-      items: cart,
-      total: cartTotal,
-      delivery: deliveryCharge,
-      grandTotal,
-      paymentMethod: 'bank',
-      screenshot: imageUrl,
-      status: 'pending',
-      createdAt: Timestamp.now(),
-    })
-    console.log('✅ Order saved to Firestore')
-
-    console.log('📧 Sending email...')
-    const emailRes = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: buyerEmail,
-        name: 'Customer',
-        orderDetails:
-          cart
-            .map((item) => `${item.name} × ${item.quantity} = ₨${item.price}`)
-            .join('\n') +
-          `\n\nDelivery: ₨${deliveryCharge}\nTotal: ₨${grandTotal}`,
-      }),
-    })
-    const emailData = await emailRes.json()
-    console.log('✅ Email sent response:', emailData)
-
-    alert('✅ Order submitted! Confirmation email sent.')
-    router.push('/products')
-  }
-  catch (err: any) {
-  if (err instanceof Error) {
-    console.error('❌ Caught Error:', err.message)
-  } else {
-    console.error('❌ Unknown error object:', err)
-  }
-  alert('❌ Failed to submit your order.')
-}
-
-   finally {
-    console.log('🔄 Resetting form state')
-    setLoading(false)
-    setScreenshot(null)
-  }
-}
 
   return (
     <main className="min-h-screen py-12 px-6 max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">Checkout</h1>
 
-      {/* Cart Summary */}
       <section className="mb-8 border p-4 rounded-xl shadow-sm">
         <h2 className="text-xl font-semibold mb-2">Order Summary</h2>
         {cart.length === 0 ? (
@@ -156,20 +160,19 @@ export default function CheckoutPage() {
             <div className="border p-4 rounded-lg bg-gray-50 space-y-4">
               <p className="text-sm">Upload your bank transfer screenshot:</p>
               <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-              const file = e.target.files?.[0]
-              if (file) {
-                          console.log('📂 File selected:', file.name)
-                          setScreenshot(file)
-                        }
-                                }
-                        }
-  className="block w-full text-sm file:mr-4 file:py-2 file:px-4
-             file:rounded file:border-0 file:text-sm
-             file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-/>
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    console.log('📂 File selected:', file.name)
+                    setScreenshot(file)
+                  }
+                }}
+                className="block w-full text-sm file:mr-4 file:py-2 file:px-4
+                          file:rounded file:border-0 file:text-sm
+                          file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+              />
 
               {screenshot && (
                 <p className="text-sm text-green-600">

@@ -5,6 +5,8 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { CartProvider } from '@/context/CartContext'
 import Navbar from '@/components/Navbar' // ✅ Make sure this path is correct
+import Link from 'next/link'
+import { FaWhatsapp } from 'react-icons/fa'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,6 +34,16 @@ export default function RootLayout({
         <CartProvider>
           <Navbar /> {/* ✅ Now your header with links will always show */}
           {children}
+
+          {/* ✅ Floating WhatsApp Button */}
+          <Link
+            href="https://wa.me/923004013971"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg z-50"
+          >
+            <FaWhatsapp size={28} />
+          </Link>
         </CartProvider>
       </body>
     </html>
