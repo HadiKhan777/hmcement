@@ -17,157 +17,115 @@ const products: Product[] = [
     id: 1,
     name: 'Lucky Regular Cement (OPC)',
     image: '/luckyregular.png',
-    basePrice: 1100,
+    basePrice: 1370,
   },
   {
     id: 2,
     name: 'Lucky Cement (SRC)',
     image: '/src.png',
-    basePrice: 1150,
+    basePrice: 1400,
   },
   {
     id: 3,
     name: 'Lucky Supreme Cement (OPC)',
     image: '/supreme.png',
-    basePrice: 1120,
+    basePrice: 1380,
   },
   {
     id: 4,
     name: 'Lucky Block Cement (OPC)',
     image: '/block.png',
-    basePrice: 1090,
+    basePrice: 1380,
   },
   {
     id: 5,
     name: 'Bestway Cement (OPC)',
     image: '/xxx.png',
-    basePrice: 1090,
+    basePrice: 1400,
   },
   {
     id: 6,
     name: 'Bestway Cement (SRC)',
     image: '/SRP.png',
-    basePrice: 1090,
+    basePrice: 1420,
   },
   {
     id: 7,
-    name: 'Bestway Pakcem Cement (OPC)',
+    name: 'Pakcem Cement (OPC)',
     image: '/bestway-cement-pakcem.jpg',
-    basePrice: 1090,
+    basePrice: 1400,
   },
-   {
+  {
     id: 8,
-    name: 'Bestway Ecocem Cement',
-    image: '/bestway-cement-ecocem.jpg',
-    basePrice: 1090,
+    name: 'Dandot Cement (OPC)',
+    image: '/Dandot-Mockup.jpg-768x768.png',
+    basePrice: 1330,
   },
-   {
+  {
     id: 9,
-    name: 'Bestway Stallion Cement',
-    image: '/bestway-cement-stallion.jpg',
-    basePrice: 1090,
+    name: 'Pioneer Cement (OPC)',
+    image: '/PIONEER-W-600x600.png',
+    basePrice: 1390,
   },
-   {
+  {
     id: 10,
-    name: 'Bestway Cement (SRC)',
-    image: '/bestway-cement-src.jpg',
-    basePrice: 1090,
+    name: 'Kohat Premium Cement (OPC)',
+    image: '/kohat-premium.jpeg',
+    basePrice: 1370,
   },
    {
     id: 11,
-    name: 'Bestway Xtreme Bond Cement',
-    image: '/bestway-cement-xtreme-bond.jpg',
-    basePrice: 1090,
+    name: 'Kohat Cement (OPC)',
+    image: '/Kohat-cement.webp',
+    basePrice: 1360,
   },
    {
     id: 12,
-    name: 'Bestway Low-Alkali Cement',
-    image: '/bestway-cement-low-alkali.jpg',
-    basePrice: 1090,
+    name: 'Kohat White Cement',
+    image: '/WHITE-KOHAT.webp',
+    basePrice: 2200,
   },
-  {
+   {
     id: 13,
-    name: 'Bestway Duracem Cement',
-    image: '/bestway-cement-duracem.jpg',
-    basePrice: 1090,
+    name: 'Flying Pakistan Cement (OPC)',
+    image: '/Flying.webp',
+    basePrice: 1320,
   },
-  {
+   {
     id: 14,
-    name: 'Bestway Low-Heat Cement',
-    image: '/bestway-cement-low-heat.jpg',
-    basePrice: 1090,
+    name: 'Maple Leaf White Cement',
+    image: '/whitemaple.jpg',
+    basePrice: 2200,
   },
-  {
+   {
     id: 15,
-    name: 'Bestway Xtreme Tile Grout Cement',
-    image: '/bestway-cement-xtreme-tile-grout.jpg',
-    basePrice: 1090,
+    name: 'Maple Leaf Cement (OPC)',
+    image: '/MAPLE-ORDINARY-W-600x600.png',
+    basePrice: 1400,
   },
-  {
+   {
     id: 16,
-    name: 'Dandot Cement (OPC)',
-    image: '/Dandot-Mockup.jpg-768x768.png',
-    basePrice: 1090,
+    name: 'Cherat Cement (OPC)',
+    image: '/Cherat-cement-400x400.webp',
+    basePrice: 1370,
   },
-  {
+   {
     id: 17,
-    name: 'Pioneer Cement (OPC)',
-    image: '/PIONEER-W-600x600.png',
-    basePrice: 1090,
+    name: 'DG Cement (OPC)',
+    image: '/DG-ORDINARY-W.png',
+    basePrice: 1400,
   },
   {
     id: 18,
-    name: 'Kohat Premium Cement (OPC)',
-    image: '/kohat-premium.jpeg',
-    basePrice: 1090,
-  },
-   {
-    id: 19,
-    name: 'Kohat Cement (OPC)',
-    image: '/Kohat-cement.webp',
-    basePrice: 1090,
-  },
-   {
-    id: 20,
-    name: 'Kohat White Cement',
-    image: '/WHITE-KOHAT.webp',
-    basePrice: 1090,
-  },
-   {
-    id: 21,
-    name: 'Flying Pakistan Cement (OPC)',
-    image: '/Flying.webp',
-    basePrice: 1090,
-  },
-   {
-    id: 22,
-    name: 'Maple Leaf White Cement',
-    image: '/whitemaple.jpg',
-    basePrice: 1090,
-  },
-   {
-    id: 23,
-    name: 'Maple Leaf Cement (OPC)',
-    image: '/MAPLE-ORDINARY-W-600x600.png',
-    basePrice: 1090,
-  },
-   {
-    id: 24,
-    name: 'Cherat Cement (OPC)',
-    image: '/Cherat-cement-400x400.webp',
-    basePrice: 1090,
-  },
-   {
-    id: 25,
-    name: 'DG Cement (OPC)',
-    image: '/DG-ORDINARY-W.png',
-    basePrice: 1090,
-  },
-  {
-    id: 26,
     name: 'DG Cement (SRC)',
     image: '/DG-Cement-Src-Ace-Material.jpg',
-    basePrice: 1090,
+    basePrice: 1420,
+  },
+  {
+    id: 19,
+    name: 'Paidar Cement (OPC)',
+    image: '/PAidar-cement-400x400.webp',
+    basePrice: 1365,
   },
 ]
 
@@ -185,7 +143,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-white text-gray-800">
       {/* Hero Section */}
       <section className="bg-[#1f1f1f] text-white py-20 px-6 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">H&M Cement Company</h1>
+        <h1 className="text-4xl md:text-6xl font-bold mb-4">H&M Company</h1>
         <p className="text-lg md:text-xl mb-6">Strong Foundations Start Here</p>
         <Link href="/products">
           <button className="bg-white text-[#1f1f1f] px-6 py-3 font-semibold rounded-2xl shadow-md hover:scale-105 transition">

@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { CartProvider } from '@/context/CartContext'
 import Navbar from '@/components/Navbar' // ✅ Make sure this path is correct
+import Footer from '@/components/Footer'
 import Link from 'next/link'
 import { FaWhatsapp } from 'react-icons/fa'
 
@@ -19,7 +20,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'H&M Cement',
+  title: 'H&M Company',
   description: 'Affordable quality cement in Pakistan',
 }
 
@@ -34,7 +35,7 @@ export default function RootLayout({
         <CartProvider>
           <Navbar /> {/* ✅ Now your header with links will always show */}
           {children}
-
+          <Footer />
           {/* ✅ Floating WhatsApp Button */}
           <Link
             href="https://wa.me/923004013971"

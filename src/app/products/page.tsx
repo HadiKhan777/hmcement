@@ -1,8 +1,9 @@
+// File: src/app/products/page.tsx
+
 'use client'
 
 import { useState } from 'react'
 import { useCart } from '@/context/CartContext'
-import Image from 'next/image'
 
 export type Product = {
   id: number
@@ -14,32 +15,28 @@ export type Product = {
 }
 
 const products: Product[] = [
-  { id: 1, name: 'Lucky Regular Cement (OPC)', image: '/luckyregular.png', basePrice: 1100, brand: 'Lucky Cement', type: 'OPC' },
-  { id: 2, name: 'Lucky Cement (SRC)', image: '/src.png', basePrice: 1150, brand: 'Lucky Cement', type: 'SRC' },
-  { id: 3, name: 'Lucky Supreme Cement (OPC)', image: '/supreme.png', basePrice: 1120, brand: 'Lucky Cement', type: 'OPC' },
-  { id: 4, name: 'Lucky Block Cement (OPC)', image: '/block.png', basePrice: 1090, brand: 'Lucky Cement', type: 'OPC' },
-  { id: 5, name: 'Bestway Cement (OPC)', image: '/xxx.png', basePrice: 1090, brand: 'Bestway Cement', type: 'OPC' },
-  { id: 6, name: 'Bestway Cement (SRC)', image: '/SRP.png', basePrice: 1090, brand: 'Bestway Cement', type: 'SRC' },
-  { id: 7, name: 'Bestway Pakcem Cement (OPC)', image: '/bestway-cement-pakcem.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'OPC' },
-  { id: 8, name: 'Bestway Ecocem Cement', image: '/bestway-cement-ecocem.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'Other' },
-  { id: 9, name: 'Bestway Stallion Cement', image: '/bestway-cement-stallion.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'Other' },
-  { id: 10, name: 'Bestway Cement (SRC)', image: '/bestway-cement-src.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'SRC' },
-  { id: 11, name: 'Bestway Xtreme Bond Cement', image: '/bestway-cement-xtreme-bond.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'Other' },
-  { id: 12, name: 'Bestway Low-Alkali Cement', image: '/bestway-cement-low-alkali.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'Other' },
-  { id: 13, name: 'Bestway Duracem Cement', image: '/bestway-cement-duracem.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'Other' },
-  { id: 14, name: 'Bestway Low-Heat Cement', image: '/bestway-cement-low-heat.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'Other' },
-  { id: 15, name: 'Bestway Xtreme Tile Grout Cement', image: '/bestway-cement-xtreme-tile-grout.jpg', basePrice: 1090, brand: 'Bestway Cement', type: 'Other' },
-  { id: 16, name: 'Dandot Cement (OPC)', image: '/Dandot-Mockup.jpg-768x768.png', basePrice: 1090, brand: 'Dandot Cement', type: 'OPC' },
-  { id: 17, name: 'Pioneer Cement (OPC)', image: '/PIONEER-W-600x600.png', basePrice: 1090, brand: 'Pioneer Cement', type: 'OPC' },
-  { id: 18, name: 'Kohat Premium Cement (OPC)', image: '/kohat-premium.jpeg', basePrice: 1090, brand: 'Kohat Cement', type: 'OPC' },
-  { id: 19, name: 'Kohat Cement (OPC)', image: '/Kohat-cement.webp', basePrice: 1090, brand: 'Kohat Cement', type: 'OPC' },
-  { id: 20, name: 'Kohat White Cement', image: '/WHITE-KOHAT.webp', basePrice: 1090, brand: 'Kohat Cement', type: 'White' },
-  { id: 21, name: 'Flying Pakistan Cement (OPC)', image: '/Flying.webp', basePrice: 1090, brand: 'Flying Cement', type: 'OPC' },
-  { id: 22, name: 'Maple Leaf White Cement', image: '/whitemaple.jpg', basePrice: 1090, brand: 'Maple Leaf Cement', type: 'White' },
-  { id: 23, name: 'Maple Leaf Cement (OPC)', image: '/MAPLE-ORDINARY-W-600x600.png', basePrice: 1090, brand: 'Maple Leaf Cement', type: 'OPC' },
-  { id: 24, name: 'Cherat Cement (OPC)', image: '/Cherat-cement-400x400.webp', basePrice: 1090, brand: 'Cherat Cement', type: 'OPC' },
-  { id: 25, name: 'DG Cement (OPC)', image: '/DG-ORDINARY-W.png', basePrice: 1090, brand: 'DG Cement', type: 'OPC' },
-  { id: 26, name: 'DG Cement (SRC)', image: '/DG-Cement-Src-Ace-Material.jpg', basePrice: 1090, brand: 'DG Cement', type: 'SRC' },
+  { id: 1, name: 'Lucky Regular Cement (OPC)', image: '/luckyregular.png', basePrice: 1370, brand: 'Lucky Cement', type: 'OPC' },
+  { id: 2, name: 'Lucky Cement (SRC)', image: '/src.png', basePrice: 1400, brand: 'Lucky Cement', type: 'SRC' },
+  { id: 3, name: 'Lucky Supreme Cement (OPC)', image: '/supreme.png', basePrice: 1380, brand: 'Lucky Cement', type: 'OPC' },
+  { id: 4, name: 'Lucky Block Cement (OPC)', image: '/block.png', basePrice: 1380, brand: 'Lucky Cement', type: 'OPC' },
+
+  { id: 5, name: 'Bestway Cement (OPC)', image: '/xxx.png', basePrice: 1400, brand: 'Bestway Cement', type: 'OPC' },
+  { id: 6, name: 'Bestway Cement (SRC)', image: '/SRP.png', basePrice: 1420, brand: 'Bestway Cement', type: 'SRC' },
+  { id: 7, name: 'Pakcem Cement (OPC)', image: '/bestway-cement-pakcem.jpg', basePrice: 1400, brand: 'Bestway Cement', type: 'OPC' },
+  { id: 8, name: 'Dandot Cement (OPC)', image: '/Dandot-Mockup.jpg-768x768.png', basePrice: 1330, brand: 'Dandot Cement', type: 'OPC' },
+  { id: 9, name: 'Pioneer Cement (OPC)', image: '/PIONEER-W-600x600.png', basePrice: 1390, brand: 'Pioneer Cement', type: 'OPC' },
+  { id: 10, name: 'Kohat Premium Cement (OPC)', image: '/kohat-premium.jpeg', basePrice: 1370, brand: 'Kohat Cement', type: 'OPC' },
+  { id: 11, name: 'Kohat Cement (OPC)', image: '/Kohat-cement.webp', basePrice: 1360, brand: 'Kohat Cement', type: 'OPC' },
+  { id: 12, name: 'Kohat White Cement', image: '/WHITE-KOHAT.webp', basePrice: 2200, brand: 'Kohat Cement', type: 'White' },
+
+  { id: 13, name: 'Flying Pakistan Cement (OPC)', image: '/Flying.webp', basePrice: 1320, brand: 'Flying Cement', type: 'OPC' },
+  { id: 14, name: 'Maple Leaf White Cement', image: '/whitemaple.jpg', basePrice: 2200, brand: 'Maple Leaf Cement', type: 'White' },
+  { id: 15, name: 'Maple Leaf Cement (OPC)', image: '/MAPLE-ORDINARY-W-600x600.png', basePrice: 1400, brand: 'Maple Leaf Cement', type: 'OPC' },
+
+  { id: 16, name: 'Cherat Cement (OPC)', image: '/Cherat-cement-400x400.webp', basePrice: 1370, brand: 'Cherat Cement', type: 'OPC' },
+  { id: 17, name: 'DG Cement (OPC)', image: '/DG-ORDINARY-W.png', basePrice: 1400, brand: 'DG Cement', type: 'OPC' },
+  { id: 18, name: 'DG Cement (SRC)', image: '/DG-Cement-Src-Ace-Material.jpg', basePrice: 1420, brand: 'DG Cement', type: 'SRC' },
+  { id: 19, name: 'Paidar Cement (OPC)', image: '/PAidar-cement-400x400.webp', basePrice: 1365, brand: 'Paidar Cement', type: 'OPC' },
 ]
 
 export default function ProductsPage() {
@@ -50,6 +47,7 @@ export default function ProductsPage() {
     setQuantities((prev) => ({ ...prev, [id]: value }))
   }
 
+  // Group products by brand > type
   const grouped = products.reduce((acc, product) => {
     if (!acc[product.brand]) acc[product.brand] = {}
     if (!acc[product.brand][product.type]) acc[product.brand][product.type] = []
@@ -70,17 +68,16 @@ export default function ProductsPage() {
                 {items.map((product) => {
                   const quantity = quantities[product.id] || 1
                   const totalPrice = quantity * product.basePrice
+
                   return (
                     <div
                       key={product.id}
                       className="border p-4 rounded-xl shadow-sm hover:shadow-md transition"
                     >
-                      <Image
+                      <img
                         src={product.image}
                         alt={product.name}
-                        width={120}
-                        height={80}
-                        className="mx-auto mb-3"
+                        className="w-32 h-20 object-contain mx-auto mb-3"
                       />
                       <h4 className="text-lg font-medium text-center">{product.name}</h4>
                       <p className="text-sm text-gray-500 text-center">₨{product.basePrice}</p>
@@ -99,6 +96,11 @@ export default function ProductsPage() {
                       <p className="text-center text-sm mt-2 text-gray-600">
                         Total: ₨{totalPrice}
                       </p>
+                      {quantity >= 100 && (
+                        <p className="text-green-600 text-center text-sm font-semibold">
+                          🚚 Free Delivery Eligible
+                        </p>
+                      )}
                       <button
                         onClick={() =>
                           addToCart({
