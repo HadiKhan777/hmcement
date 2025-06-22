@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   try {
     const { email, name, orderDetails, orderId } = body
 
-    const invoiceBase64 = await generateInvoicePdf(orderId, email, orderDetails)
+    const invoiceBase64 = await generateInvoicePdf(orderId, email, orderDetails, name)
 
     const invoiceAttachment = {
       filename: `invoice-${orderId}.pdf`,
