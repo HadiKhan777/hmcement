@@ -81,7 +81,7 @@ export default function CheckoutPage() {
 
       alert('✅ Order submitted! Confirmation email sent.')
       router.push('/products')
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof Error) {
         console.error('❌ Caught Error:', err.message)
       } else {
