@@ -3,6 +3,7 @@
 import { useCart } from '@/context/CartContext'
 import Link from 'next/link'
 
+
 export default function CartPage() {
   const { cart, removeFromCart,updateQuantity } = useCart()
 

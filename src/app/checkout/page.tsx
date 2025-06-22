@@ -15,10 +15,10 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const deliveryCharge = 500
+   const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0)
+  const deliveryCharge = totalQuantity > 100 ? 0 : 500
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0)
   const grandTotal = cartTotal + deliveryCharge
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
