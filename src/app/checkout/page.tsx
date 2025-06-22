@@ -55,7 +55,8 @@ export default function CheckoutPage() {
     orderDetails:
       cart.map((item) => `${item.name} × ${item.quantity} = ₨${item.price}`).join('\n') +
       `\n\nDelivery: ₨${deliveryCharge}\nTotal: ₨${grandTotal}`,
-    orderId, // ✅ pass the ID to backend
+    orderId, 
+    deliveryCharge// ✅ pass the ID to backend
   }),
 })
       console.log('✅ Order saved to Firestore with ID:', orderId)
