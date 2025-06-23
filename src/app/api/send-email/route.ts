@@ -8,10 +8,16 @@ export async function POST(req: Request) {
   const body = await req.json()
 
   try {
-    const { email, name, orderDetails, orderId } = body
+    const { email, name, phone, orderDetails, orderId, deliveryCharge } = body
 
-    const invoiceBase64 = await generateInvoicePdf(orderId, email, orderDetails, body.deliveryCharge)
-
+    const invoiceBase64 = await generateInvoicePdf(
+      orderId,
+      email,
+      orderDetails,
+      body.deliveryCharge,
+      body.name,
+      body.phone
+    )
 
     const invoiceAttachment = {
       filename: `invoice-${orderId}.pdf`,
@@ -19,7 +25,7 @@ export async function POST(req: Request) {
       contentType: 'application/pdf',
     }
 
-    // 1. Send email to customer
+    // ✅ 1. Send email to customer
     await resend.emails.send({
       from: 'orders@hmcement.com',
       to: email,
@@ -28,21 +34,27 @@ export async function POST(req: Request) {
         <p>Hi ${name},</p>
         <p>Thank you for your order. Here is your invoice and summary:</p>
         <pre style="background:#f4f4f4;padding:10px;border-radius:5px;">${orderDetails}</pre>
-        <p>We'll verify your payment and deliver your order soon.</p>
+        <p>We will verify your payment and deliver your order soon.</p>
+        <p>For questions, contact us at 0300-4013971.</p>
         <p>Regards,<br/>H&M Cement Team</p>
       `,
       attachments: [invoiceAttachment],
     })
 
-    // 2. Send notification to admin
+    // ✅ 2. Send email to admin
     await resend.emails.send({
       from: 'orders@hmcement.com',
-      to: 'your-email@hmcement.com', // replace with actual admin email
+      to: 'admin@hmcement.com', // ✅ Replace with actual admin email
       subject: '📦 New Cement Order Received!',
       html: `
-        <p><strong>New order from ${name} (${email})</strong></p>
-        <p>Order ID: ${orderId}</p>
-        <p>Details:</p>
+        <p><strong>New order received:</strong></p>
+        <ul>
+          <li><strong>Name:</strong> ${name}</li>
+          <li><strong>Email:</strong> ${email}</li>
+          <li><strong>Phone:</strong> ${phone}</li>
+          <li><strong>Order ID:</strong> ${orderId}</li>
+        </ul>
+        <p><strong>Order Details:</strong></p>
         <pre style="background:#f4f4f4;padding:10px;border-radius:5px;">${orderDetails}</pre>
       `,
       attachments: [invoiceAttachment],
