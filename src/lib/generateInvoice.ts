@@ -72,7 +72,7 @@ export async function generateInvoicePdf(
   for (const line of lines) {
     const match = line.match(/(.+?) × (\d+) = Rs\.?(\d+)/)
     if (match) {
-      const [_, productName, qty, total] = match
+      const [, productName, qty, total] = match
       drawText(productName.trim(), 50, y)
       drawText(qty, 310, y)
       drawText(`Rs.${total}`, 400, y)
