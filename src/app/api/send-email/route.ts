@@ -53,6 +53,7 @@ export async function POST(req: Request) {
           <li><strong>Email:</strong> ${email}</li>
           <li><strong>Phone:</strong> ${phone}</li>
           <li><strong>Order ID:</strong> ${orderId}</li>
+          <li><strong>Delivery Charges:</strong> ${deliveryCharge}</li>
         </ul>
         <p><strong>Order Details:</strong></p>
         <pre style="background:#f4f4f4;padding:10px;border-radius:5px;">${orderDetails}</pre>

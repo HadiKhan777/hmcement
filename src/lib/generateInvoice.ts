@@ -36,6 +36,10 @@ export async function generateInvoicePdf(orderId: string, name: string, phone: s
   cursorY -= 20
   drawText(`Customer Email: ${email}`, 50, cursorY)
   cursorY -= 20
+  drawText(`Customer Name: ${name}`, 50, cursorY)
+  cursorY -= 20
+  drawText(`Customer Phone: ${phone}`, 50, cursorY)
+  cursorY -= 20
   drawText(`Date: ${new Date().toLocaleString()}`, 50, cursorY)
   cursorY -= 20
   drawText(`Phone/WhatsApp: 0300-4013971`, 50, cursorY)
