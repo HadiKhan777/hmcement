@@ -11,19 +11,26 @@ export async function generateInvoicePdf(
   deliveryCharge: number
 ) {
   const pdfDoc = await PDFDocument.create()
-  const page = pdfDoc.addPage([600, 750])
+  const page = pdfDoc.addPage([600, 780])
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
-  const logoPath = path.resolve(process.cwd(), 'public/logo.png')
-  const logoBytes = await readFile(logoPath)
-  const logoImage = await pdfDoc.embedPng(logoBytes)
-  const logoDims = logoImage.scale(0.15)
+  // ✅ Load favicon.png instead of logo.png
+  const faviconPath = path.resolve(process.cwd(), 'public/favicon.png')
+  const faviconBytes = await readFile(faviconPath)
+  const faviconImage = await pdfDoc.embedPng(faviconBytes)
+  const faviconDims = faviconImage.scale(0.15)
 
-  page.drawImage(logoImage, {
-    x: 440,
-    y: 690,
-    width: logoDims.width,
-    height: logoDims.height,
+  // ✅ Coordinates for logo and title
+  const logoX = 50
+  const logoY = 720
+  const titleX = logoX + faviconDims.width + 10 // leave space between logo and text
+
+  // ✅ Draw logo
+  page.drawImage(faviconImage, {
+    x: logoX,
+    y: logoY,
+    width: faviconDims.width,
+    height: faviconDims.height,
   })
 
   const drawText = (text: string, x: number, y: number, size = 12) => {
@@ -36,42 +43,55 @@ export async function generateInvoicePdf(
     })
   }
 
-  let cursorY = 700
-  drawText('H&M Company - Order Invoice', 50, cursorY, 18)
-  cursorY -= 30
-  drawText(`Order ID: ${orderId}`, 50, cursorY)
-  cursorY -= 20
-  drawText(`Customer Email: ${email}`, 50, cursorY)
-  cursorY -= 20
-  drawText(`Customer Name: ${name}`, 50, cursorY)
-  cursorY -= 20
-  drawText(`Customer Phone: ${phone}`, 50, cursorY)
-  cursorY -= 20
-  drawText(`Date: ${new Date().toLocaleString()}`, 50, cursorY)
-  cursorY -= 20
-  drawText(`Company Phone/WhatsApp: 0300-4013971`, 50, cursorY)
-  cursorY -= 30
+  // ✅ Draw Title next to logo
+  drawText('H&M Company - Order Invoice', titleX, logoY + 5, 18)
 
-  drawText('Order Summary:', 50, cursorY, 14)
-  cursorY -= 24
+  let y = logoY - 30
 
+  // Order Info
+  drawText(`🆔 Order ID: ${orderId}`, 50, y); y -= 18
+  drawText(`📧 Email: ${email}`, 50, y); y -= 18
+  drawText(`👤 Name: ${name}`, 50, y); y -= 18
+  drawText(`📞 Phone: ${phone}`, 50, y); y -= 18
+  drawText(`📅 Date: ${new Date().toLocaleString()}`, 50, y); y -= 18
+  drawText(`📱 Company WhatsApp: 0300-4013971`, 50, y); y -= 30
+
+  // Section Title
+  drawText('🛒 Order Summary:', 50, y, 14); y -= 24
+
+  // Table Header
+  drawText('Product', 50, y)
+  drawText('Qty', 300, y)
+  drawText('Total Price', 400, y)
+  y -= 16
+
+  // Line Items
   let cartTotal = 0
   const lines = orderDetails.split('\n').filter(Boolean)
 
   for (const line of lines) {
-    if (cursorY < 80) break // Avoid writing at the very bottom
-    drawText(line, 60, cursorY)
-    const match = line.match(/= Rs\.?(\d+)/)
-    if (match) cartTotal += parseInt(match[1])
-    cursorY -= 18
+    const match = line.match(/(.+?) × (\d+) = Rs\.?(\d+)/)
+    if (match) {
+      const [_, productName, qty, total] = match
+      drawText(productName.trim(), 50, y)
+      drawText(qty, 310, y)
+      drawText(`Rs.${total}`, 400, y)
+      cartTotal += parseInt(total)
+      y -= 16
+    } else {
+      // For summary lines like delivery/total
+      drawText(line, 50, y)
+      y -= 16
+    }
+
+    if (y < 80) break
   }
 
+  // Totals
+  y -= 20
   const safeDeliveryCharge = typeof deliveryCharge === 'number' ? deliveryCharge : 0
-
-  cursorY -= 20
-  drawText(`Delivery: Rs.${safeDeliveryCharge}`, 60, cursorY)
-  cursorY -= 20
-  drawText(`Total: Rs.${cartTotal + safeDeliveryCharge}`, 60, cursorY, 14)
+  drawText(`🚚 Delivery Charge: Rs.${safeDeliveryCharge}`, 50, y); y -= 20
+  drawText(`🧾 Grand Total: Rs.${cartTotal + safeDeliveryCharge}`, 50, y, 14)
 
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes).toString('base64')
