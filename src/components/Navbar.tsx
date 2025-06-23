@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useCart } from '@/context/CartContext'
 
 export default function Navbar() {
@@ -9,8 +10,15 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-      <Link href="/" className="text-xl font-bold text-[#1f1f1f]">
-        H&M Cement
+      <Link href="/" className="flex items-center gap-2 text-xl font-bold text-[#1f1f1f] no-underline">
+       <Image
+          src="/favicon.png"
+          alt="H&M Logo"
+          width={28}
+          height={28}
+          className="rounded-sm"
+        />
+        H&M Company
       </Link>
       <div className="flex gap-6 items-center">
         <Link href="/products" className="text-gray-700 hover:underline">

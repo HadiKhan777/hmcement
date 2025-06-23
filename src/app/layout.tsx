@@ -22,6 +22,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'H&M Company',
   description: 'Affordable quality cement in Pakistan',
+   icons: {
+    icon: 'favicon.png', 
+  },
 }
 
 export default function RootLayout({
