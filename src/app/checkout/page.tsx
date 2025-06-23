@@ -12,7 +12,7 @@ export default function CheckoutPage() {
   const [buyerEmail, setBuyerEmail] = useState('')
   const [buyerName, setBuyerName] = useState('')
   const [buyerPhone, setBuyerPhone] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank'>('card')
+  const paymentMethod = 'bank' as const
   const [screenshot, setScreenshot] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -26,7 +26,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   if (!cart.length) return alert('❌ Your cart is empty.')
   if (!buyerEmail) return alert('📧 Please enter your email.')
-  if (!screenshot && paymentMethod === 'bank') return alert('📎 Upload screenshot required.')
+  if (!screenshot) return alert('📎 Upload screenshot required.')
 
   try {
     setLoading(true)
@@ -154,31 +154,6 @@ const handleSubmit = async (e: React.FormEvent) => {
               className="border rounded px-3 py-2 w-full"
             />
           </div>
-
-          <div>
-            <label className="block font-medium mb-2">Choose Payment Method:</label>
-            <select
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value as 'card' | 'bank')}
-              className="border rounded px-3 py-2 w-full"
-            >
-              <option value="card">Credit Card</option>
-              <option value="bank">Bank Transfer</option>
-            </select>
-          </div>
-
-          {paymentMethod === 'card' && (
-            <div className="border p-4 rounded-lg bg-gray-50">
-              <p className="text-sm text-gray-600">You’ll be redirected to a secure card gateway (to be added).</p>
-              <button
-                type="submit"
-                className="mt-4 bg-[#1f1f1f] text-white px-6 py-2 rounded hover:scale-105 transition"
-              >
-                Pay with Credit Card
-              </button>
-            </div>
-          )}
-
           {paymentMethod === 'bank' && (
             <div className="border p-4 rounded-lg bg-gray-50 space-y-4">
               <div className="text-sm bg-white p-3 rounded border border-gray-200">

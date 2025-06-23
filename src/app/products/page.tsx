@@ -1,9 +1,8 @@
-// File: src/app/products/page.tsx
-
 'use client'
 
 import { useState } from 'react'
 import { useCart } from '@/context/CartContext'
+import Image from 'next/image'
 
 export type Product = {
   id: number
@@ -74,10 +73,12 @@ export default function ProductsPage() {
                       key={product.id}
                       className="border p-4 rounded-xl shadow-sm hover:shadow-md transition"
                     >
-                      <img
+                      <Image
                         src={product.image}
                         alt={product.name}
-                        className="w-32 h-20 object-contain mx-auto mb-3"
+                        width={128}
+                        height={80}
+                        className="mx-auto mb-3 object-contain"
                       />
                       <h4 className="text-lg font-medium text-center">{product.name}</h4>
                       <p className="text-sm text-gray-500 text-center">₨{product.basePrice}</p>

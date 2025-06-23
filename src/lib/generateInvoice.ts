@@ -2,16 +2,23 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { readFile } from 'fs/promises'
 import path from 'path'
 
-export async function generateInvoicePdf(orderId: string, name: string, phone: string, email: string, orderDetails: string, deliveryCharge: number) {
+export async function generateInvoicePdf(
+  orderId: string,
+  name: string,
+  phone: string,
+  email: string,
+  orderDetails: string,
+  deliveryCharge: number
+) {
   const pdfDoc = await PDFDocument.create()
   const page = pdfDoc.addPage([600, 750])
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
-  // Load and embed the logo image
   const logoPath = path.resolve(process.cwd(), 'public/logo.png')
   const logoBytes = await readFile(logoPath)
   const logoImage = await pdfDoc.embedPng(logoBytes)
   const logoDims = logoImage.scale(0.15)
+
   page.drawImage(logoImage, {
     x: 440,
     y: 690,
@@ -42,22 +49,29 @@ export async function generateInvoicePdf(orderId: string, name: string, phone: s
   cursorY -= 20
   drawText(`Date: ${new Date().toLocaleString()}`, 50, cursorY)
   cursorY -= 20
-  drawText(`Phone/WhatsApp: 0300-4013971`, 50, cursorY)
+  drawText(`Company Phone/WhatsApp: 0300-4013971`, 50, cursorY)
   cursorY -= 30
-  drawText('Order Summary:', 50, cursorY)
-  cursorY -= 20
+
+  drawText('Order Summary:', 50, cursorY, 14)
+  cursorY -= 24
 
   let cartTotal = 0
-  orderDetails.split('\n').forEach((line) => {
-    drawText(line, 60, cursorY)
-    const match = line.match(/= Rs\.(\d+)/)
-    if (match) cartTotal += parseInt(match[1])
-    cursorY -= 16
-  })
+  const lines = orderDetails.split('\n').filter(Boolean)
 
-  drawText(`Delivery: Rs.${deliveryCharge}`, 60, cursorY)
-  cursorY -= 16
-  drawText(`Total: Rs.${cartTotal + deliveryCharge}`, 60, cursorY)
+  for (const line of lines) {
+    if (cursorY < 80) break // Avoid writing at the very bottom
+    drawText(line, 60, cursorY)
+    const match = line.match(/= Rs\.?(\d+)/)
+    if (match) cartTotal += parseInt(match[1])
+    cursorY -= 18
+  }
+
+  const safeDeliveryCharge = typeof deliveryCharge === 'number' ? deliveryCharge : 0
+
+  cursorY -= 20
+  drawText(`Delivery: Rs.${safeDeliveryCharge}`, 60, cursorY)
+  cursorY -= 20
+  drawText(`Total: Rs.${cartTotal + safeDeliveryCharge}`, 60, cursorY, 14)
 
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes).toString('base64')

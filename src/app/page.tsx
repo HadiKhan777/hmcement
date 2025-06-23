@@ -151,7 +151,7 @@ export default function HomePage() {
           </button>
         </Link>
       </section>
-
+      
       {/* Product Cards */}
       <section className="py-16 px-6 max-w-6xl mx-auto">
         <h2 className="text-2xl font-bold mb-8 text-center">Popular Cement Brands</h2>
