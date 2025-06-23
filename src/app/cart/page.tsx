@@ -9,7 +9,7 @@ export default function CartPage() {
 
   const total = cart.reduce((sum, item) => sum + item.price, 0)
   const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0)
-  const delivery = totalQuantity > 100 ? 0 : 1600
+  const delivery = totalQuantity >= 100 ? 0 : totalQuantity * 25
 
   const grandTotal = total + delivery
 

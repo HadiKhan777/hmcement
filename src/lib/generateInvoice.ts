@@ -2,7 +2,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { readFile } from 'fs/promises'
 import path from 'path'
 
-export async function generateInvoicePdf(orderId: string, email: string, orderDetails: string, deliveryCharge: number) {
+export async function generateInvoicePdf(orderId: string, name: string, phone: string, email: string, orderDetails: string, deliveryCharge: number) {
   const pdfDoc = await PDFDocument.create()
   const page = pdfDoc.addPage([600, 750])
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
