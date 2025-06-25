@@ -59,7 +59,6 @@ export async function generateInvoicePdf(
   drawText('Total Price', 400, y)
   y -= 16
 
-  let cartTotal = 0
   const lines = orderDetails.split('\n').filter(Boolean)
 
   for (const line of lines) {
@@ -69,7 +68,6 @@ export async function generateInvoicePdf(
       drawText(productName.trim(), 50, y)
       drawText(qty, 310, y)
       drawText(`Rs.${total}`, 400, y)
-      cartTotal += parseInt(total)
       y -= 16
     } else {
       drawText(line, 50, y)
@@ -79,8 +77,6 @@ export async function generateInvoicePdf(
     if (y < 80) break
   }
 
-  y -= 20
-  const safeDeliveryCharge = typeof deliveryCharge === 'number' ? deliveryCharge : 0
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes).toString('base64')
 }
