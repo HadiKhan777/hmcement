@@ -59,10 +59,13 @@ export async function generateInvoicePdf(
   drawText('Total Price', 400, y)
   y -= 16
 
-  let cartTotal = 0
   const lines = orderDetails.split('\n').filter(Boolean)
+  let cartTotal = 0
 
   for (const line of lines) {
+    // Skip if it's a Total/Delivery line in original string
+    if (/^Delivery:|^Total:/i.test(line)) continue
+
     const match = line.match(/(.+?) × (\d+) = Rs\.?(\d+)/)
     if (match) {
       const [, productName, qty, total] = match
@@ -81,12 +84,9 @@ export async function generateInvoicePdf(
 
   y -= 20
 
-  if (deliveryCharge > 0) {
-    drawText(`Delivery Charge: Rs.${deliveryCharge}`, 50, y); y -= 18
-  }
-
-  drawText(`Grand Total: Rs.${cartTotal + deliveryCharge}`, 50, y, 14)
-
+  // ✅ Delivery Charge Line
+  drawText(`Delivery Charge: Rs.${deliveryCharge}`, 50, y)
+  y -= 18
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes).toString('base64')
 }
