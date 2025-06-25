@@ -45,14 +45,14 @@ export async function generateInvoicePdf(
 
   let y = logoY - 30
 
-  drawText(`🆔 Order ID: ${orderId}`, 50, y); y -= 18
-  drawText(`📧 Email: ${email}`, 50, y); y -= 18
-  drawText(`👤 Name: ${name}`, 50, y); y -= 18
-  drawText(`📞 Phone: ${phone}`, 50, y); y -= 18
-  drawText(`📅 Date: ${new Date().toLocaleString()}`, 50, y); y -= 18
-  drawText(`📱 Company WhatsApp: 0300-4013971`, 50, y); y -= 30
+  drawText(` Order ID: ${orderId}`, 50, y); y -= 18
+  drawText(` Email: ${email}`, 50, y); y -= 18
+  drawText(` Name: ${name}`, 50, y); y -= 18
+  drawText(` Phone: ${phone}`, 50, y); y -= 18
+  drawText(` Date: ${new Date().toLocaleString()}`, 50, y); y -= 18
+  drawText(` Company WhatsApp: 0300-4013971`, 50, y); y -= 30
 
-  drawText('🛒 Order Summary:', 50, y, 14); y -= 24
+  drawText(' Order Summary:', 50, y, 14); y -= 24
 
   drawText('Product', 50, y)
   drawText('Qty', 300, y)
@@ -64,10 +64,8 @@ export async function generateInvoicePdf(
 
   for (const line of lines) {
     const match = line.match(/(.+?) × (\d+) = Rs\.?(\d+)/)
-    if (match !== null) {
-      const productName = match[1]
-      const qty = match[2]
-      const total = match[3]
+    if (match) {
+      const [, productName, qty, total] = match
       drawText(productName.trim(), 50, y)
       drawText(qty, 310, y)
       drawText(`Rs.${total}`, 400, y)
@@ -83,9 +81,6 @@ export async function generateInvoicePdf(
 
   y -= 20
   const safeDeliveryCharge = typeof deliveryCharge === 'number' ? deliveryCharge : 0
-  drawText(`🚚 Delivery Charge: Rs.${safeDeliveryCharge}`, 50, y); y -= 20
-  drawText(`🧾 Grand Total: Rs.${cartTotal + safeDeliveryCharge}`, 50, y, 14)
-
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes).toString('base64')
 }

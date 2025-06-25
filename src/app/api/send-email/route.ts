@@ -12,20 +12,20 @@ export async function POST(req: Request) {
 
     const invoiceBase64 = await generateInvoicePdf(
       orderId,
+      name,
+      phone,
       email,
       orderDetails,
-      body.deliveryCharge,
-      body.name,
-      body.phone
+      deliveryCharge
     )
 
     const invoiceAttachment = {
       filename: `invoice-${orderId}.pdf`,
-      content: invoiceBase64,
+      content: Buffer.from(invoiceBase64, 'base64'), // ✅ FIXED
       contentType: 'application/pdf',
     }
 
-    // ✅ 1. Send email to customer
+    // ✅ Send to customer
     await resend.emails.send({
       from: 'orders@hmcement.com',
       to: email,
@@ -41,10 +41,10 @@ export async function POST(req: Request) {
       attachments: [invoiceAttachment],
     })
 
-    // ✅ 2. Send email to admin
+    // ✅ Send to admin
     await resend.emails.send({
       from: 'orders@hmcement.com',
-      to: 'admin@hmcement.com', // ✅ Replace with actual admin email
+      to: 'admin@hmcement.com',
       subject: '📦 New Cement Order Received!',
       html: `
         <p><strong>New order received:</strong></p>
