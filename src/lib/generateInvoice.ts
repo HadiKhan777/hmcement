@@ -63,7 +63,6 @@ export async function generateInvoicePdf(
   let cartTotal = 0
 
   for (const line of lines) {
-    // Skip if it's a Total/Delivery line in original string
     if (/^Delivery:|^Total:/i.test(line)) continue
 
     const match = line.match(/(.+?) × (\d+) = Rs\.?(\d+)/)
@@ -87,6 +86,10 @@ export async function generateInvoicePdf(
   // ✅ Delivery Charge Line
   drawText(`Delivery Charge: Rs.${deliveryCharge}`, 50, y)
   y -= 18
+
+  // ✅ Grand Total Line (fixes ESLint cartTotal issue)
+  drawText(`Grand Total: Rs.${cartTotal + deliveryCharge}`, 50, y, 14)
+
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes).toString('base64')
 }
