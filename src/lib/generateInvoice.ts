@@ -60,7 +60,7 @@ export async function generateInvoicePdf(
   y -= 16
 
   const lines = orderDetails.split('\n').filter(Boolean)
-  let cartTotal = 0
+  let Total = 0
 
   for (const line of lines) {
     if (/^Delivery:|^Total:/i.test(line)) continue
@@ -71,7 +71,7 @@ export async function generateInvoicePdf(
       drawText(productName.trim(), 50, y)
       drawText(qty, 310, y)
       drawText(`Rs.${total}`, 400, y)
-      cartTotal += parseInt(total)
+      Total += parseInt(total)
       y -= 16
     } else {
       drawText(line, 50, y)
@@ -88,7 +88,7 @@ export async function generateInvoicePdf(
   y -= 18
 
   // ✅ Grand Total Line (fixes ESLint cartTotal issue)
-  drawText(`Grand Total: Rs.${cartTotal + deliveryCharge}`, 50, y, 14)
+  drawText(`Grand Total: Rs.${Total + deliveryCharge}`, 50, y, 14)
 
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes).toString('base64')
